@@ -1,0 +1,117 @@
+package com.tracker.dao;
+
+import com.tracker.model.*;
+import com.tracker.util.DBConnection;
+import jakarta.servlet.http.HttpServlet;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmployeeDAO {
+    public static List<Employee> getEmployees(HttpServlet servlet) throws SQLException {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+
+        if(dbConnection == null) {
+            System.out.println("Connection failed...");
+            return null;
+        } else {
+            Connection connection = dbConnection.getConnection();
+            ResultSet resultSet = getEmployeeByQuery(-1, dbConnection);
+
+            List<Employee> employees = new ArrayList<>();
+
+            while(resultSet.next()) {
+                employees.add(getEmployeeFromSet(resultSet, servlet));
+            }
+
+            return employees;
+        }
+    }
+    public static Employee getEmployeeById(HttpServlet servlet, int id) throws SQLException {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+
+        if(dbConnection == null) {
+            return null;
+        } else {
+            ResultSet resultSet = getEmployeeByQuery(id, dbConnection);
+
+            if(resultSet.next()) {
+                return getEmployeeFromSet(resultSet, servlet);
+            }
+        }
+        return null;
+    }
+
+    private static Employee getEmployeeFromSet(ResultSet resultSet, HttpServlet servlet) throws SQLException {
+        int roleId = resultSet.getInt("role_id");
+        String roleName = resultSet.getString("role");
+        Role role = new Role(roleId, roleName);
+
+        int leaderId = resultSet.getInt("leader_id");
+        String leaderName = resultSet.getString("leader_name");
+        Employee leader = new Employee(leaderId, leaderName);
+
+        int teamId = resultSet.getInt("team_id");
+        String teamName = resultSet.getString("team_name");
+        Team team = new Team(teamId, teamName, leader);
+
+
+        int employeeId = resultSet.getInt("id");
+        String name = resultSet.getString("name");
+        String contact = resultSet.getString("contact");
+
+        List<Task> tasks = getEmployeeTasks(servlet, employeeId);
+
+        return new Employee(employeeId, name, contact, role, team, tasks);
+    }
+
+    private static ResultSet getEmployeeByQuery(int id, DBConnection dbConnection) throws SQLException {
+        Connection connection = dbConnection.getConnection();
+        String sql = """
+                SELECT e.id, e.name, e.contact, r.id as role_id, r.role as role,
+                e.team_id, t.name as team_name, leader.id as leader_id, leader.name as leader_name
+                FROM employees as e
+                JOIN roles r ON e.role_id = r.id
+                LEFT JOIN teams t ON t.id = e.team_id
+                LEFT JOIN employees as leader ON t.leader_id = leader.id
+                """;
+        if(id != -1) {
+            sql += " WHERE e.id = ?";
+        }
+        PreparedStatement statement = connection.prepareStatement(sql);
+        if(id != -1) {
+            statement.setInt(1, id);
+        }
+        return statement.executeQuery();
+    }
+
+    public static List<Task> getEmployeeTasks(HttpServlet servlet, int employeeId) throws SQLException {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+        if(dbConnection == null) {
+            return null;
+        } else {
+            Connection connection = dbConnection.getConnection();
+            String sql = """
+                    SELECT t.id, t.title, t.description, t.status
+                    FROM tasks as t
+                    WHERE t.assigned_to = ?
+                    """;
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, employeeId);
+            ResultSet resultSet = statement.executeQuery();
+            List<Task> tasks = new ArrayList<>();
+            while(resultSet.next()) {
+                int taskId = resultSet.getInt("id");
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                int status = resultSet.getInt("status");
+                Task task = new Task(taskId, title, description, TaskStatus.fromValue(status));
+                tasks.add(task);
+            }
+            return tasks;
+        }
+    }
+}

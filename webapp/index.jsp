@@ -6,5 +6,6 @@
 <body>
 <h2>Welcome to JSP!</h2>
 <a href="hello">Go to Servlet</a>
+<a href="/db">Go to db</a>
 </body>
 </html>
