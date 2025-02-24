@@ -5,17 +5,18 @@ import java.util.List;
 public class Employee {
     private int id;
     private String name;
-    private String contact;
+    private String email;
     private Role role;
     private Team team;
     private List<Task> tasks;
+    private transient String password; /* Hashed Password */
 
     public Employee() { }
 
-    public Employee(int id, String name, String contact, Role role, Team team, List<Task> tasks) {
+    public Employee(int id, String name, String email, Role role, Team team, List<Task> tasks) {
         this.id = id;
         this.name = name;
-        this.contact = contact;
+        this.email = email;
         this.role = role;
         this.team = team;
         this.tasks = tasks;
@@ -46,12 +47,12 @@ public class Employee {
         this.name = name;
     }
 
-    public String getContact() {
-        return contact;
+    public String getEmail() {
+        return email;
     }
 
-    public void setContact(String contact) {
-        this.contact = contact;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Role getRole() {
@@ -80,5 +81,13 @@ public class Employee {
 
     public void removeTask(Task task) {
         tasks.remove(task);
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return this.password;
     }
 }

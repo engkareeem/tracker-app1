@@ -17,16 +17,17 @@ public class EmployeeDAO {
         if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
-                    INSERT INTO employees (name, contact, role_id, team_id)
-                    VALUES (?, ?, ?, ?)
+                    INSERT INTO employees (name, email, password, role_id, team_id)
+                    VALUES (?, ?, ?, ?, ?)
                     """;
 
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setString(1, employee.getName());
-            statement.setString(2, employee.getContact());
-            statement.setInt(3, employee.getRole().getId());
-            statement.setInt(4, employee.getTeam().getId());
+            statement.setString(2, employee.getEmail());
+            statement.setString(3, employee.getPassword());
+            statement.setInt(4, employee.getRole().getId());
+            statement.setInt(5, employee.getTeam().getId());
             statement.executeUpdate();
         } else {
             throw new SQLException("DB Connection Error");
@@ -61,14 +62,14 @@ public class EmployeeDAO {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     UPDATE employees
-                    SET name=?,contact=?,role_id=?,team_id=?
+                    SET name=?,email=?,role_id=?,team_id=?
                     WHERE id=?
                     """;
 
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setString(1, employee.getName());
-            statement.setString(2, employee.getContact());
+            statement.setString(2, employee.getEmail());
             statement.setInt(3, employee.getRole().getId());
             statement.setInt(4, employee.getTeam().getId());
 
@@ -115,11 +116,11 @@ public class EmployeeDAO {
 
         int employeeId = resultSet.getInt("id");
         String name = resultSet.getString("name");
-        String contact = resultSet.getString("contact");
+        String email = resultSet.getString("email");
 
         List<Task> tasks = TaskDAO.getEmployeeTasks(servlet, employeeId);
 
-        return new Employee(employeeId, name, contact, role, team, tasks);
+        return new Employee(employeeId, name, email, role, team, tasks);
     }
 
     private static ResultSet getEmployeeByQuery(HttpServlet servlet, int id) throws SQLException {
@@ -129,7 +130,7 @@ public class EmployeeDAO {
         } else {
             Connection connection = dbConnection.getConnection();
             String sql = """
-                    SELECT e.id, e.name, e.contact, r.id as role_id, r.role as role,
+                    SELECT e.id, e.name, e.email, r.id as role_id, r.role as role,
                     e.team_id, t.name as team_name, leader.id as leader_id, leader.name as leader_name
                     FROM employees as e
                     JOIN roles r ON e.role_id = r.id

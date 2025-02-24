@@ -28,7 +28,7 @@ public class UpdateEmployeeServlet extends HttpServlet {
             resp.getWriter().println("<label for='name'>Name</label>");
             resp.getWriter().println("<input type='text' value='" + employee.getName() + "' id='name' name='name' required>");
             resp.getWriter().println("<label for='contact'>Contact</label>");
-            resp.getWriter().println("<input type='text' value='" + employee.getContact() + "' id='contact' name='contact' required>");
+            resp.getWriter().println("<input type='text' value='" + employee.getEmail() + "' id='contact' name='contact' required>");
             resp.getWriter().println("<label for='role'>Role " + employee.getRole().getId() + " </label>");
             resp.getWriter().println("<select id='role' name='role'>");
             resp.getWriter().println("<option value='3' "+ ((employee.getRole().getId() == 3) ? "selected" : "")+">Developer</option>");

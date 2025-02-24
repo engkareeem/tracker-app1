@@ -1,5 +1,6 @@
 package com.tracker;
 
+import com.tracker.dao.AuthDAO;
 import com.tracker.dao.EmployeeDAO;
 import com.tracker.model.Employee;
 import com.tracker.model.Role;
@@ -20,8 +21,10 @@ public class AddEmployeeServlet extends HttpServlet {
         resp.getWriter().println("<form method='post'>");
         resp.getWriter().println("<label for='name'>Name</label>");
         resp.getWriter().println("<input type='text' id='name' name='name' required>");
-        resp.getWriter().println("<label for='contact'>Contact</label>");
-        resp.getWriter().println("<input type='text' id='contact' name='contact' required>");
+        resp.getWriter().println("<label for='email'>Email</label>");
+        resp.getWriter().println("<input type='text' id='email' name='email' required>");
+        resp.getWriter().println("<label for='password'>Password</label>");
+        resp.getWriter().println("<input type='text' id='password' name='password' required>");
         resp.getWriter().println("<label for='role'>Role</label>");
         resp.getWriter().println("<select id='role' name='role'>");
         resp.getWriter().println("<option value='3'>Developer</option>");
@@ -41,18 +44,19 @@ public class AddEmployeeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String name = req.getParameter("name");
-        String contact = req.getParameter("contact");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
         int role = Integer.parseInt(req.getParameter("role"));
         int team = Integer.parseInt(req.getParameter("team"));
 
         Employee employee = new Employee();
         employee.setName(name);
-        employee.setContact(contact);
+        employee.setEmail(email);
         employee.setRole(new Role(role));
         employee.setTeam(new Team(team));
 
         try {
-            EmployeeDAO.addEmployee(this, employee);
+            AuthDAO.createAccount(this, employee, password);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -1,12 +1,10 @@
 package com.tracker;
 
-import java.sql.Connection;
-
+import com.tracker.dao.AuthDAO;
 import com.tracker.dao.EmployeeDAO;
 import com.tracker.dao.TeamDAO;
 import com.tracker.model.Employee;
 import com.tracker.model.Team;
-import com.tracker.util.DBConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseTestServlet extends HttpServlet {
@@ -38,7 +35,7 @@ public class DatabaseTestServlet extends HttpServlet {
                 out.println("<h1>Employee Details</h1>");
                 out.println("<p>ID: " + employee.getId() + "</p>");
                 out.println("<p>Name: " + employee.getName() + "</p>");
-                out.println("<p>Contact: " + employee.getContact() + "</p>");
+                out.println("<p>Contact: " + employee.getEmail() + "</p>");
                 out.println("<p>Role: " + employee.getRole().getName() + "</p>");
                 out.println("<p>Team: " + employee.getTeam().getName() + "</p>");
                 out.println("<h2>Tasks</h2>");
@@ -61,16 +58,21 @@ public class DatabaseTestServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(req.getParameter("name") + " " + req.getParameter("leaderId"));
-        String name = req.getParameter("name");
-        int leaderId = Integer.parseInt(req.getParameter("leaderId"));
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
 
-        Team team = new Team(name, leaderId);
+        if(email != null && password != null) {
+            try {
+                Employee employee = AuthDAO.login(this, email, password);
+                if(employee == null) {
+                    resp.getWriter().println("<h1>Incorrect email or password</h1>");
+                } else {
+                    resp.getWriter().println("<h1>WELCOME!</h1>");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
 
-        try {
-            TeamDAO.createTeam(this, team);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 }
