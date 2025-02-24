@@ -19,6 +19,11 @@ public class Team {
         this.id = id;
     }
 
+    public Team(String name, int leaderId) {
+        this.name = name;
+        this.leader = new Employee(leaderId);
+    }
+
     public int getId() {
         return id;
     }

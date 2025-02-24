@@ -117,7 +117,7 @@ public class EmployeeDAO {
         String name = resultSet.getString("name");
         String contact = resultSet.getString("contact");
 
-        List<Task> tasks = getEmployeeTasks(servlet, employeeId);
+        List<Task> tasks = TaskDAO.getEmployeeTasks(servlet, employeeId);
 
         return new Employee(employeeId, name, contact, role, team, tasks);
     }
@@ -146,33 +146,6 @@ public class EmployeeDAO {
                 statement.setInt(1, id);
             }
             return statement.executeQuery();
-        }
-    }
-
-    public static List<Task> getEmployeeTasks(HttpServlet servlet, int employeeId) throws SQLException {
-        DBConnection dbConnection = DBConnection.getInstance(servlet);
-        if (dbConnection == null) {
-            return null;
-        } else {
-            Connection connection = dbConnection.getConnection();
-            String sql = """
-                    SELECT t.id, t.title, t.description, t.status
-                    FROM tasks as t
-                    WHERE t.assigned_to = ?
-                    """;
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, employeeId);
-            ResultSet resultSet = statement.executeQuery();
-            List<Task> tasks = new ArrayList<>();
-            while (resultSet.next()) {
-                int taskId = resultSet.getInt("id");
-                String title = resultSet.getString("title");
-                String description = resultSet.getString("description");
-                int status = resultSet.getInt("status");
-                Task task = new Task(taskId, title, description, TaskStatus.fromValue(status));
-                tasks.add(task);
-            }
-            return tasks;
         }
     }
 }

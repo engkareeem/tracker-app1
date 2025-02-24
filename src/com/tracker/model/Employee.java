@@ -21,6 +21,10 @@ public class Employee {
         this.tasks = tasks;
     }
 
+    public Employee(int id) {
+        this.id = id;
+    }
+
     public Employee(int id, String name) {
         this.id = id;
         this.name = name;

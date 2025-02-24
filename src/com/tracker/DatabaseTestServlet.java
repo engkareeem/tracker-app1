@@ -3,7 +3,9 @@ package com.tracker;
 import java.sql.Connection;
 
 import com.tracker.dao.EmployeeDAO;
+import com.tracker.dao.TeamDAO;
 import com.tracker.model.Employee;
+import com.tracker.model.Team;
 import com.tracker.util.DBConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -55,8 +57,20 @@ public class DatabaseTestServlet extends HttpServlet {
             out.println("<h1>Database Error</h1>");
             out.println("<p>" + e.getMessage() + "</p>");
         }
-
     }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println(req.getParameter("name") + " " + req.getParameter("leaderId"));
+        String name = req.getParameter("name");
+        int leaderId = Integer.parseInt(req.getParameter("leaderId"));
 
+        Team team = new Team(name, leaderId);
+
+        try {
+            TeamDAO.createTeam(this, team);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
