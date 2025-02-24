@@ -5,10 +5,18 @@ public class Team {
     private String name;
     private Employee leader;
 
+    public Team() {
+
+    }
+
     public Team(int id, String name, Employee leader) {
         this.id = id;
         this.name = name;
         this.leader = leader;
+    }
+
+    public Team(int id) {
+        this.id = id;
     }
 
     public int getId() {

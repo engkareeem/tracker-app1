@@ -13,6 +13,33 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>addEmployee</servlet-name>
+        <servlet-class>com.tracker.AddEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>addEmployee</servlet-name>
+        <url-pattern>/add</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>updateEmployee</servlet-name>
+        <servlet-class>com.tracker.UpdateEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>updateEmployee</servlet-name>
+        <url-pattern>/update</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>removeEmployee</servlet-name>
+        <servlet-class>com.tracker.RemoveEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>removeEmployee</servlet-name>
+        <url-pattern>/remove</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>connection</servlet-name>
         <servlet-class>com.tracker.DatabaseTestServlet</servlet-class>
     </servlet>

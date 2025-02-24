@@ -24,7 +24,7 @@ public class DatabaseTestServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             List<Employee> employees = EmployeeDAO.getEmployees(this);
-            if(employees == null) {
+            if(employees.isEmpty()) {
                 out.println("<h1>Database Error</h1>");
                 return;
             }

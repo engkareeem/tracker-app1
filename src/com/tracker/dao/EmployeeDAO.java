@@ -3,6 +3,7 @@ package com.tracker.dao;
 import com.tracker.model.*;
 import com.tracker.util.DBConnection;
 import jakarta.servlet.http.HttpServlet;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,38 +12,91 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeDAO {
-    public static List<Employee> getEmployees(HttpServlet servlet) throws SQLException {
+    public static void addEmployee(HttpServlet servlet, Employee employee) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
-
-        if(dbConnection == null) {
-            System.out.println("Connection failed...");
-            return null;
-        } else {
+        if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
-            ResultSet resultSet = getEmployeeByQuery(-1, dbConnection);
+            String sql = """
+                    INSERT INTO employees (name, contact, role_id, team_id)
+                    VALUES (?, ?, ?, ?)
+                    """;
 
-            List<Employee> employees = new ArrayList<>();
+            PreparedStatement statement = connection.prepareStatement(sql);
 
-            while(resultSet.next()) {
-                employees.add(getEmployeeFromSet(resultSet, servlet));
-            }
-
-            return employees;
+            statement.setString(1, employee.getName());
+            statement.setString(2, employee.getContact());
+            statement.setInt(3, employee.getRole().getId());
+            statement.setInt(4, employee.getTeam().getId());
+            statement.executeUpdate();
+        } else {
+            throw new SQLException("DB Connection Error");
         }
     }
-    public static Employee getEmployeeById(HttpServlet servlet, int id) throws SQLException {
+
+    public static void removeEmployeeById(HttpServlet servlet, int id) {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+        if (dbConnection != null) {
+            Connection connection = dbConnection.getConnection();
+            String sql = """
+                    DELETE FROM employees
+                    WHERE id = ?
+                    """;
+
+            try {
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setInt(1, id);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new RuntimeException("DB Connection Error");
+        }
+    }
+
+    public static void updateEmployee(HttpServlet servlet, Employee employee) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
-        if(dbConnection == null) {
-            return null;
-        } else {
-            ResultSet resultSet = getEmployeeByQuery(id, dbConnection);
+        if(dbConnection != null) {
+            Connection connection = dbConnection.getConnection();
+            String sql = """
+                    UPDATE employees
+                    SET name=?,contact=?,role_id=?,team_id=?
+                    WHERE id=?
+                    """;
 
-            if(resultSet.next()) {
-                return getEmployeeFromSet(resultSet, servlet);
-            }
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, employee.getName());
+            statement.setString(2, employee.getContact());
+            statement.setInt(3, employee.getRole().getId());
+            statement.setInt(4, employee.getTeam().getId());
+
+            statement.executeUpdate();
+        } else {
+            throw new SQLException("DB Connection Error");
         }
-        return null;
+    }
+
+    public static List<Employee> getEmployees(HttpServlet servlet) throws SQLException {
+        ResultSet resultSet = getEmployeeByQuery(servlet, -1);
+        List<Employee> employees = new ArrayList<>();
+
+        while (resultSet.next()) {
+            employees.add(getEmployeeFromSet(resultSet, servlet));
+        }
+
+        return employees;
+    }
+
+    public static Employee getEmployeeById(HttpServlet servlet, int id) throws SQLException {
+        ResultSet resultSet = getEmployeeByQuery(servlet, id);
+
+        if (resultSet.next()) {
+            return getEmployeeFromSet(resultSet, servlet);
+        } else {
+            return null;
+        }
     }
 
     private static Employee getEmployeeFromSet(ResultSet resultSet, HttpServlet servlet) throws SQLException {
@@ -68,29 +122,36 @@ public class EmployeeDAO {
         return new Employee(employeeId, name, contact, role, team, tasks);
     }
 
-    private static ResultSet getEmployeeByQuery(int id, DBConnection dbConnection) throws SQLException {
-        Connection connection = dbConnection.getConnection();
-        String sql = """
-                SELECT e.id, e.name, e.contact, r.id as role_id, r.role as role,
-                e.team_id, t.name as team_name, leader.id as leader_id, leader.name as leader_name
-                FROM employees as e
-                JOIN roles r ON e.role_id = r.id
-                LEFT JOIN teams t ON t.id = e.team_id
-                LEFT JOIN employees as leader ON t.leader_id = leader.id
-                """;
-        if(id != -1) {
-            sql += " WHERE e.id = ?";
+    private static ResultSet getEmployeeByQuery(HttpServlet servlet, int id) throws SQLException {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+        if (dbConnection == null) {
+            throw new SQLException("DB Connection Error");
+        } else {
+            Connection connection = dbConnection.getConnection();
+            String sql = """
+                    SELECT e.id, e.name, e.contact, r.id as role_id, r.role as role,
+                    e.team_id, t.name as team_name, leader.id as leader_id, leader.name as leader_name
+                    FROM employees as e
+                    JOIN roles r ON e.role_id = r.id
+                    LEFT JOIN teams t ON t.id = e.team_id
+                    LEFT JOIN employees as leader ON t.leader_id = leader.id
+                    """;
+            if (id != -1) {
+                sql += " WHERE e.id = ?";
+            } else {
+                sql += " ORDER BY e.id";
+            }
+            PreparedStatement statement = connection.prepareStatement(sql);
+            if (id != -1) {
+                statement.setInt(1, id);
+            }
+            return statement.executeQuery();
         }
-        PreparedStatement statement = connection.prepareStatement(sql);
-        if(id != -1) {
-            statement.setInt(1, id);
-        }
-        return statement.executeQuery();
     }
 
     public static List<Task> getEmployeeTasks(HttpServlet servlet, int employeeId) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
-        if(dbConnection == null) {
+        if (dbConnection == null) {
             return null;
         } else {
             Connection connection = dbConnection.getConnection();
@@ -103,7 +164,7 @@ public class EmployeeDAO {
             statement.setInt(1, employeeId);
             ResultSet resultSet = statement.executeQuery();
             List<Task> tasks = new ArrayList<>();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 int taskId = resultSet.getInt("id");
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
