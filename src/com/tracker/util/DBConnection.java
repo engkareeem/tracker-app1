@@ -34,13 +34,13 @@ public class DBConnection {
             String user = servlet.getServletContext().getInitParameter("dbUser");
             String password = servlet.getServletContext().getInitParameter("dbPassword");
 
-            instance = new DBConnection();
 
             try {
+                instance = new DBConnection();
                 instance.init(url, user, password);
                 return instance;
             } catch (Exception e) {
-                return null; // connection failed
+                return null; /* Connection failed */
             }
         }
     }

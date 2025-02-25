@@ -34,6 +34,7 @@ public class AuthDAO {
             statement.setString(1, email);
 
             ResultSet resultSet = statement.executeQuery();
+
             if(resultSet.next()) {
                 String hashedPassword = resultSet.getString("password");
                 int id = resultSet.getInt("id");

@@ -3,52 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
+    
     <servlet>
-        <servlet-name>HelloServlet</servlet-name>
-        <servlet-class>com.tracker.HelloServlet</servlet-class>
+        <servlet-name>Login</servlet-name>
+        <servlet-class>com.tracker.controller.LoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>HelloServlet</servlet-name>
-        <url-pattern>/demo</url-pattern>
+        <servlet-name>Login</servlet-name>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
-
-    <servlet>
-        <servlet-name>addEmployee</servlet-name>
-        <servlet-class>com.tracker.AddEmployeeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>addEmployee</servlet-name>
-        <url-pattern>/add</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>updateEmployee</servlet-name>
-        <servlet-class>com.tracker.UpdateEmployeeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>updateEmployee</servlet-name>
-        <url-pattern>/update</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>removeEmployee</servlet-name>
-        <servlet-class>com.tracker.RemoveEmployeeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>removeEmployee</servlet-name>
-        <url-pattern>/remove</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>connection</servlet-name>
-        <servlet-class>com.tracker.DatabaseTestServlet</servlet-class>
-        <multipart-config/>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>connection</servlet-name>
-        <url-pattern>/db</url-pattern>
-    </servlet-mapping>
-
+    
     <context-param>
         <param-name>jdbcUrl</param-name>
         <param-value>jdbc:mysql://localhost:3306/tracker</param-value>
@@ -59,6 +23,6 @@
     </context-param>
     <context-param>
         <param-name>dbPassword</param-name>
-        <param-value></param-value> <!-- Default is empty in XAMPP -->
+        <param-value></param-value>
     </context-param>
 </web-app>
