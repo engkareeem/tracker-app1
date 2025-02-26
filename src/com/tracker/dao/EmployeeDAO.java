@@ -107,7 +107,8 @@ public class EmployeeDAO {
 
         int leaderId = resultSet.getInt("leader_id");
         String leaderName = resultSet.getString("leader_name");
-        Employee leader = new Employee(leaderId, leaderName);
+        String leaderEmail = resultSet.getString("leader_email");
+        Employee leader = new Employee(leaderId, leaderName, leaderEmail);
 
         int teamId = resultSet.getInt("team_id");
         String teamName = resultSet.getString("team_name");
@@ -131,7 +132,8 @@ public class EmployeeDAO {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     SELECT e.id, e.name, e.email, r.id as role_id, r.role as role,
-                    e.team_id, t.name as team_name, leader.id as leader_id, leader.name as leader_name
+                    e.team_id, t.name as team_name, leader.id as leader_id,
+                    leader.name as leader_name, leader.email as leader_email
                     FROM employees as e
                     JOIN roles r ON e.role_id = r.id
                     LEFT JOIN teams t ON t.id = e.team_id

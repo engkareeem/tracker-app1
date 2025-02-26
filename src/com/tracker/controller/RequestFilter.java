@@ -19,6 +19,9 @@ public class RequestFilter implements Filter {
         HttpServletResponse hResp = (HttpServletResponse) resp;
         HttpSession session = hReq.getSession(false);
         String URI = hReq.getRequestURI();
+
+        hReq.setAttribute("URI", URI);
+
         if(session == null || session.getAttribute("employee") == null) {
             if(URI.equals("/login")) {
                 filterChain.doFilter(req, resp);

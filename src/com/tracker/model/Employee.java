@@ -26,9 +26,10 @@ public class Employee {
         this.id = id;
     }
 
-    public Employee(int id, String name) {
+    public Employee(int id, String name, String email) {
         this.id = id;
         this.name = name;
+        this.email = email;
     }
 
     public int getId() {

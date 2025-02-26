@@ -31,6 +31,15 @@
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     
+    <servlet>
+        <servlet-name>MyTasks</servlet-name>
+        <servlet-class>com.tracker.controller.developer.MyTasksServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MyTasks</servlet-name>
+        <url-pattern>/my-tasks</url-pattern>
+    </servlet-mapping>
+    
     <context-param>
         <param-name>jdbcUrl</param-name>
         <param-value>jdbc:mysql://localhost:3306/tracker</param-value>

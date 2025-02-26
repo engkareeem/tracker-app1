@@ -1,10 +1,13 @@
 package com.tracker.dao;
 
+import com.tracker.model.Employee;
 import com.tracker.model.Team;
 import com.tracker.util.DBConnection;
 import jakarta.servlet.http.HttpServlet;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TeamDAO {
     public static void setEmployeeToTeam(HttpServlet servlet,
@@ -24,6 +27,39 @@ public class TeamDAO {
             statement.setInt(2, employeeId);
 
             statement.executeUpdate();
+        } else {
+            throw new SQLException("DB Connection Error");
+        }
+    }
+
+    public static List<Employee> getTeamMembers(HttpServlet servlet, Team team) throws SQLException {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+
+        if(dbConnection != null) {
+            Connection connection = dbConnection.getConnection();
+            String sql = """
+                    SELECT e.id, e.name, e.email
+                    FROM employees as e
+                    WHERE not e.id = ? AND team_id = ?
+                    """;
+            PreparedStatement statement = connection.prepareStatement(sql);
+            List<Employee> members = new ArrayList<>();
+
+            statement.setInt(1, team.getLeader().getId());
+            statement.setInt(2, team.getId());
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                Employee employee = new Employee(id, name, email);
+
+                members.add(employee);
+            }
+
+            return members;
         } else {
             throw new SQLException("DB Connection Error");
         }

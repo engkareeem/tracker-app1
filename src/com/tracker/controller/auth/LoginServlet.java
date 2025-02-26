@@ -15,14 +15,14 @@ import java.sql.SQLException;
 public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher dispatcher = req.getRequestDispatcher("Login.jsp");
+        RequestDispatcher dispatcher = req.getRequestDispatcher("view/login.jsp");
 
         dispatcher.forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher dispatcher = req.getRequestDispatcher("Login.jsp");
+        RequestDispatcher dispatcher = req.getRequestDispatcher("view/login.jsp");
 
         String email = req.getParameter("email");
         String password = req.getParameter("password");
