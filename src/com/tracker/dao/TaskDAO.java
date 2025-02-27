@@ -1,7 +1,9 @@
 package com.tracker.dao;
 
+import com.tracker.model.Employee;
 import com.tracker.model.Task;
 import com.tracker.model.TaskStatus;
+import com.tracker.model.Team;
 import com.tracker.util.DBConnection;
 import jakarta.servlet.http.HttpServlet;
 
@@ -34,6 +36,58 @@ public class TaskDAO {
                 tasks.add(task);
             }
             return tasks;
+        }
+    }
+
+    public static List<Task> getTeamTasks(HttpServlet servlet, int teamId, String search, String searchId) throws SQLException {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+
+        if(dbConnection != null) {
+            Connection connection = dbConnection.getConnection();
+            String sql = """
+                    SELECT t.id, t.title, t.description, t.status, e.id as employee_id,
+                    e.name as employee_name, e.email as employee_email, e.team_id as team_id
+                    FROM tasks as t
+                    JOIN employees as e ON t.assigned_to = e.id
+                    WHERE team_id = ? AND (UPPER(t.title) LIKE UPPER(?) OR UPPER(t.description)
+                     LIKE UPPER(?) OR UPPER(e.name) LIKE UPPER(?))
+                    """;
+
+            if(searchId != null && !searchId.isEmpty()) {
+                sql += " AND e.id = ?";
+            }
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+            List<Task> tasks = new ArrayList<>();
+
+            statement.setInt(1, teamId);
+            statement.setString(2, "%" + search + "%");
+            statement.setString(3, "%" + search + "%");
+            statement.setString(4, "%" + search + "%");
+
+            if(searchId != null && !searchId.isEmpty()) {
+                statement.setInt(5, Integer.parseInt(searchId));
+            }
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()) {
+                int taskId = resultSet.getInt("id");
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                int status = resultSet.getInt("status");
+                int employeeId = resultSet.getInt("employee_id");
+                String employeeName = resultSet.getString("employee_name");
+                String employeeEmail = resultSet.getString("employee_email");
+                Employee employee = new Employee(employeeId, employeeName, employeeEmail);
+                Task task = new Task(taskId, title, description, TaskStatus.fromValue(status), employee);
+
+                tasks.add(task);
+            }
+
+            return tasks;
+        } else {
+            throw new SQLException("DB Connection Error");
         }
     }
 
@@ -71,20 +125,43 @@ public class TaskDAO {
 
     public static void updateTask(HttpServlet servlet, Task task) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
+        List<Object> parameters = new ArrayList<>();
 
         if(dbConnection != null) {
             Connection connection = dbConnection.getConnection();
-            String sql = """
-                    UPDATE tasks
-                    set title=?, description=?, status=?
-                    WHERE id=?
-                    """;
-            PreparedStatement statement = connection.prepareStatement(sql);
 
-            statement.setString(1, task.getTitle());
-            statement.setString(2, task.getDescription());
-            statement.setInt(3, task.getStatus().getValue());
-            statement.setInt(4, task.getId());
+            StringBuilder sql = new StringBuilder("UPDATE tasks SET");
+
+            if(task.getTitle() != null) {
+                sql.append(" title=?, ");
+                parameters.add(task.getTitle());
+            }
+
+            if(task.getDescription() != null) {
+                sql.append(" description=?, ");
+                parameters.add(task.getDescription());
+            }
+
+            if(task.getStatus() != null) {
+                sql.append(" status=?, ");
+                parameters.add(task.getStatus());
+            }
+
+            sql.setLength(sql.length() - 2);
+            sql.append(" WHERE id=?");
+            parameters.add(task.getId());
+
+            PreparedStatement statement = connection.prepareStatement(sql.toString());
+
+            for (int i = 0; i < parameters.size(); i++) {
+                if(parameters.get(i) instanceof String) {
+                    statement.setString(i + 1, (String) parameters.get(i));
+                } else if(parameters.get(i) instanceof TaskStatus) {
+                    statement.setInt(i + 1, ((TaskStatus) parameters.get(i)).getValue());
+                } else if(parameters.get(i) instanceof Integer) {
+                    statement.setInt(i + 1, (Integer) parameters.get(i));
+                }
+            }
 
             statement.executeUpdate();
         } else {

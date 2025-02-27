@@ -10,11 +10,64 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeamDAO {
+    public static List<Team> getTeams(HttpServlet servlet, String search, int id) throws SQLException {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+
+        if (dbConnection != null) {
+            Connection connection = dbConnection.getConnection();
+            String sql = """
+                    SELECT t.id, t.name, t.leader_id, e.name as leader_name, e.email as leader_email
+                    FROM teams as t
+                    JOIN employees as e ON t.leader_id = e.id
+                    """;
+            if (id != -1) {
+                sql += " WHERE t.id = ?";
+            } else {
+                sql += """
+                        WHERE UPPER(t.name) LIKE UPPER(?)
+                        OR UPPER(e.name) LIKE UPPER(?)
+                        OR UPPER(e.email) LIKE UPPER(?)
+                        """;
+            }
+            List<Team> teams = new ArrayList<>();
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            if (id != -1) {
+                statement.setInt(1, id);
+            } else {
+                statement.setString(1, "%" + search + "%");
+                statement.setString(2, "%" + search + "%");
+                statement.setString(3, "%" + search + "%");
+            }
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int teamId = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int leaderId = resultSet.getInt("leader_id");
+                String leaderName = resultSet.getString("leader_name");
+                String leaderEmail = resultSet.getString("leader_email");
+                Employee leader = new Employee(leaderId, leaderName, leaderEmail);
+                Team team = new Team(teamId, name, leader);
+
+                teams.add(team);
+            }
+
+
+            return teams;
+        } else {
+            throw new RuntimeException("DB Connection Error");
+        }
+    }
+
+
     public static void setEmployeeToTeam(HttpServlet servlet,
                                          int teamId, int employeeId) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
-        if(dbConnection != null) {
+        if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     UPDATE Employees
@@ -35,7 +88,7 @@ public class TeamDAO {
     public static List<Employee> getTeamMembers(HttpServlet servlet, Team team) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
-        if(dbConnection != null) {
+        if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     SELECT e.id, e.name, e.email
@@ -50,7 +103,7 @@ public class TeamDAO {
 
             ResultSet resultSet = statement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
                 String email = resultSet.getString("email");
@@ -68,7 +121,7 @@ public class TeamDAO {
     public static void createTeam(HttpServlet servlet, Team team) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
-        if(dbConnection != null) {
+        if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     INSERT INTO teams (name, leader_id)
@@ -82,8 +135,8 @@ public class TeamDAO {
             int affectedRows = statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
 
-            if(affectedRows > 0) {
-                if(generatedKeys.next()) {
+            if (affectedRows > 0) {
+                if (generatedKeys.next()) {
                     int teamId = generatedKeys.getInt(1);
 
                     setEmployeeToTeam(servlet, teamId, team.getLeader().getId());
@@ -95,7 +148,7 @@ public class TeamDAO {
     public static void updateTeam(HttpServlet servlet, Team team) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
-        if(dbConnection != null) {
+        if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     UPDATE teams
@@ -115,7 +168,7 @@ public class TeamDAO {
     public static void removeTeam(HttpServlet servlet, int teamId) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
-        if(dbConnection != null) {
+        if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     DELETE FROM teams

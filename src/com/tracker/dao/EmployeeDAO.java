@@ -58,7 +58,7 @@ public class EmployeeDAO {
     public static void updateEmployee(HttpServlet servlet, Employee employee) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
-        if(dbConnection != null) {
+        if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     UPDATE employees
@@ -79,8 +79,8 @@ public class EmployeeDAO {
         }
     }
 
-    public static List<Employee> getEmployees(HttpServlet servlet) throws SQLException {
-        ResultSet resultSet = getEmployeeByQuery(servlet, -1);
+    public static List<Employee> getEmployees(HttpServlet servlet, int role) throws SQLException {
+        ResultSet resultSet = getEmployeeByQuery(servlet, -1, role);
         List<Employee> employees = new ArrayList<>();
 
         while (resultSet.next()) {
@@ -91,12 +91,39 @@ public class EmployeeDAO {
     }
 
     public static Employee getEmployeeById(HttpServlet servlet, int id) throws SQLException {
-        ResultSet resultSet = getEmployeeByQuery(servlet, id);
+        ResultSet resultSet = getEmployeeByQuery(servlet, id, -1);
 
         if (resultSet.next()) {
             return getEmployeeFromSet(resultSet, servlet);
         } else {
             return null;
+        }
+    }
+
+    public static List<Employee> getAvailableLeaders(HttpServlet servlet) throws SQLException {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+        if (dbConnection != null) {
+            Connection connection = dbConnection.getConnection();
+            String sql = """
+                    SELECT e.id, e.name, e.email
+                    FROM employees as e
+                    WHERE e.role_id = 2 AND e.team_id IS NULL
+                    """;
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            List<Employee> employees = new ArrayList<>();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+
+                employees.add(new Employee(id, name, email));
+            }
+
+            return employees;
+        } else {
+            throw new RuntimeException("DB Connection Error");
         }
     }
 
@@ -119,12 +146,10 @@ public class EmployeeDAO {
         String name = resultSet.getString("name");
         String email = resultSet.getString("email");
 
-        List<Task> tasks = TaskDAO.getEmployeeTasks(servlet, employeeId);
-
-        return new Employee(employeeId, name, email, role, team, tasks);
+        return new Employee(employeeId, name, email, role, team);
     }
 
-    private static ResultSet getEmployeeByQuery(HttpServlet servlet, int id) throws SQLException {
+    private static ResultSet getEmployeeByQuery(HttpServlet servlet, int id, int role) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
         if (dbConnection == null) {
             throw new SQLException("DB Connection Error");
@@ -142,12 +167,22 @@ public class EmployeeDAO {
             if (id != -1) {
                 sql += " WHERE e.id = ?";
             } else {
+                if (role != -1) {
+                    sql += " WHERE r.id = ?";
+                }
                 sql += " ORDER BY e.id";
             }
+
+
             PreparedStatement statement = connection.prepareStatement(sql);
             if (id != -1) {
                 statement.setInt(1, id);
             }
+
+            if (role != -1) {
+                statement.setInt(1, role);
+            }
+
             return statement.executeQuery();
         }
     }

@@ -66,16 +66,26 @@
         <a class="${requestScope.URI eq "/" ? 'active':''}" href="/">Home</a>
         <c:choose>
             <c:when test="${sessionScope.employee.role.id eq 3}">
-                <a      class="${requestScope.URI eq "/my-tasks" ? 'active':''}"
-                        href="${pageContext.request.contextPath}/my-tasks">My Tasks</a>
+                <a class="${requestScope.URI eq "/my-tasks" ? 'active':''}"
+                   href="${pageContext.request.contextPath}/my-tasks">My Tasks</a>
             </c:when>
             <c:when test="${sessionScope.employee.role.id eq 2}">
-                <a href="#">My Team</a>
-                <a href="#">Leader</a>
+                <a class="${requestScope.URI eq "/my-tasks" ? 'active':''}"
+                   href="${pageContext.request.contextPath}/my-tasks">My Tasks</a>
+                <a class="${requestScope.URI eq "/my-team" ? 'active':''}"
+                   href="${pageContext.request.contextPath}/my-team">My Team</a>
+                <a class="${requestScope.URI eq "/teams/tasks" ? 'active':''}"
+                   href="${pageContext.request.contextPath}/teams/tasks?teamId=${sessionScope.employee.team.id}">Team Tasks</a>
+                <a class="${requestScope.URI eq "/pending-tasks" ? 'active':''}"
+                   href="${pageContext.request.contextPath}/pending-tasks">Pending Tasks</a>
             </c:when>
             <c:when test="${sessionScope.employee.role.id eq 1}">
-                <a href="#">Manager</a>
-                <a href="#">Manager</a>
+                <a class="${requestScope.URI eq "/teams" ? 'active':''}"
+                   href="${pageContext.request.contextPath}/teams">Teams</a>
+                <a class="${requestScope.URI eq "/pending-tasks" ? 'active':''}"
+                   href="${pageContext.request.contextPath}/pending-tasks">Pending Tasks</a>
+                <a class="${requestScope.URI eq "/pending-tasks" ? 'active':''}"
+                   href="${pageContext.request.contextPath}/employees">Employees</a>
             </c:when>
         </c:choose>
         <form method="post" action="${pageContext.request.contextPath}/logout" class="logout-form">

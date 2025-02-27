@@ -5,12 +5,29 @@ public class Task {
     private String title;
     private String description;
     private TaskStatus status;
+    private Employee assignedTo;
+
+    public Task() {
+
+    }
+
+    public Task(int id) {
+        this.id = id;
+    }
 
     public Task(int id, String title, String description, TaskStatus status) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
+    }
+
+    public Task(int id, String title, String description, TaskStatus status, Employee assignedTo) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.assignedTo = assignedTo;
     }
 
     public int getId() {
@@ -44,5 +61,13 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public Employee getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(Employee assignedTo) {
+        this.assignedTo = assignedTo;
     }
 }

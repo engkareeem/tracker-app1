@@ -30,7 +30,7 @@
         <servlet-name>Logout</servlet-name>
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>MyTasks</servlet-name>
         <servlet-class>com.tracker.controller.developer.MyTasksServlet</servlet-class>
@@ -39,7 +39,52 @@
         <servlet-name>MyTasks</servlet-name>
         <url-pattern>/my-tasks</url-pattern>
     </servlet-mapping>
-    
+
+    <servlet>
+        <servlet-name>AssignTask</servlet-name>
+        <servlet-class>com.tracker.controller.developer.AssignTaskServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AssignTask</servlet-name>
+        <url-pattern>/assign-task</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MyTeam</servlet-name>
+        <servlet-class>com.tracker.controller.teamleader.MyTeamServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MyTeam</servlet-name>
+        <url-pattern>/my-team</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MyTeamTasks</servlet-name>
+        <servlet-class>com.tracker.controller.teamleader.TeamTasksServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MyTeamTasks</servlet-name>
+        <url-pattern>/teams/tasks</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Teams</servlet-name>
+        <servlet-class>com.tracker.controller.manager.TeamsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Teams</servlet-name>
+        <url-pattern>/teams</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Employees</servlet-name>
+        <servlet-class>com.tracker.controller.manager.EmployeesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Employees</servlet-name>
+        <url-pattern>/employees</url-pattern>
+    </servlet-mapping>
+
     <context-param>
         <param-name>jdbcUrl</param-name>
         <param-value>jdbc:mysql://localhost:3306/tracker</param-value>

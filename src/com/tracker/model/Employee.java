@@ -8,18 +8,16 @@ public class Employee {
     private String email;
     private Role role;
     private Team team;
-    private List<Task> tasks;
     private transient String password; /* Hashed Password */
 
     public Employee() { }
 
-    public Employee(int id, String name, String email, Role role, Team team, List<Task> tasks) {
+    public Employee(int id, String name, String email, Role role, Team team) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
         this.team = team;
-        this.tasks = tasks;
     }
 
     public Employee(int id) {
@@ -70,18 +68,6 @@ public class Employee {
 
     public void setTeam(Team team) {
         this.team = team;
-    }
-
-    public List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void addTask(Task task) {
-        tasks.add(task);
-    }
-
-    public void removeTask(Task task) {
-        tasks.remove(task);
     }
 
     public void setPassword(String password) {
