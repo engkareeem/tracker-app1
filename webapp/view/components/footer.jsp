@@ -9,6 +9,7 @@
 <html>
 <style>
     .footer {
+        display: none;
         position: fixed;
         left: 0;
         bottom: 0;

@@ -18,7 +18,7 @@ public class EmployeeDAO {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     INSERT INTO employees (name, email, password, role_id, team_id)
-                    VALUES (?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, null)
                     """;
 
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -27,7 +27,6 @@ public class EmployeeDAO {
             statement.setString(2, employee.getEmail());
             statement.setString(3, employee.getPassword());
             statement.setInt(4, employee.getRole().getId());
-            statement.setInt(5, employee.getTeam().getId());
             statement.executeUpdate();
         } else {
             throw new SQLException("DB Connection Error");
@@ -60,18 +59,42 @@ public class EmployeeDAO {
 
         if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
-            String sql = """
-                    UPDATE employees
-                    SET name=?,email=?,role_id=?,team_id=?
-                    WHERE id=?
-                    """;
+            StringBuilder sql = new StringBuilder("UPDATE employees SET ");
+            List<Object> params = new ArrayList<>();
 
-            PreparedStatement statement = connection.prepareStatement(sql);
+            if(employee.getName() != null) {
+                sql.append("name = ?, ");
+                params.add(employee.getName());
+            }
 
-            statement.setString(1, employee.getName());
-            statement.setString(2, employee.getEmail());
-            statement.setInt(3, employee.getRole().getId());
-            statement.setInt(4, employee.getTeam().getId());
+            if(employee.getEmail() != null) {
+                sql.append("email = ?, ");
+                params.add(employee.getEmail());
+            }
+
+            if(employee.getRole() != null) {
+                sql.append("role_id = ?, ");
+                params.add(employee.getRole().getId());
+            }
+
+            if(employee.getTeam() != null) {
+                sql.append("team_id = ?, ");
+                params.add(employee.getTeam().getId());
+            }
+
+            sql.setLength(sql.length() - 2);
+            sql.append(" WHERE id = ?");
+            params.add(employee.getId());
+
+            PreparedStatement statement = connection.prepareStatement(sql.toString());
+
+            for (int i = 0; i < params.size(); i++) {
+                if(params.get(i) instanceof String) {
+                    statement.setString(i + 1, (String) params.get(i));
+                } else if(params.get(i) instanceof Integer) {
+                    statement.setInt(i + 1, (Integer) params.get(i));
+                }
+            }
 
             statement.executeUpdate();
         } else {

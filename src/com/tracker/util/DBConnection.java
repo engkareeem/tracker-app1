@@ -1,8 +1,6 @@
 package com.tracker.util;
 
 import jakarta.servlet.http.HttpServlet;
-
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -38,6 +36,10 @@ public class DBConnection {
             try {
                 instance = new DBConnection();
                 instance.init(url, user, password);
+
+                if(instance.getConnection() == null) {
+                    instance = null;
+                }
                 return instance;
             } catch (Exception e) {
                 return null; /* Connection failed */

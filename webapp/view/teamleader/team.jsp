@@ -15,6 +15,7 @@
         .body-container {
             padding-left: 10px;
             padding-right: 10px;
+            overflow: auto;
         }
 
         table {

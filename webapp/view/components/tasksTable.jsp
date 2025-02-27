@@ -44,6 +44,9 @@
 <form method="post">
     <div class="save-button-container">
         <button type="submit" class="save-button">Save</button>
+        <a href="${pageContext.request.contextPath}/assign-task?employeeId=self" style="margin-left: 10px">
+            <button type="button">New Task</button>
+        </a>
     </div>
     <table>
         <tr>

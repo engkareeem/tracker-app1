@@ -55,6 +55,13 @@
         .by-container {
             border-right: 1px solid rgb(162, 162, 162);
         }
+
+        .table-actions-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -91,32 +98,54 @@
             <button type="submit">Sort</button>
         </div>
     </form>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-        </tr>
-        <c:forEach var="employee" items="${requestScope.employees}">
+    <form method="post">
+        <div class="table-actions-container">
+            <button type="submit" class="save-button">Save</button>
+
+            <a href="${pageContext.request.contextPath}/employees/new">
+                <button type="button">
+                    Add Employee
+                </button>
+            </a>
+        </div>
+        <table>
             <tr>
-                <td>${employee.id}</td>
-                <td>${employee.name}</td>
-                <td>${employee.email}</td>
-                <td>
-                    <div class="actions-container">
-                        <c:if test="${not empty employee.team}">
-                            <a href="${pageContext.request.contextPath}/teams/tasks?teamId=${employee.team.id}&employeeId=${employee.id}">
-                                <button>
-                                    View Tasks
-                                </button>
-                            </a>
-                        </c:if>
-                    </div>
-                </td>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
             </tr>
-        </c:forEach>
-    </table>
+            <c:forEach var="employee" items="${requestScope.employees}">
+                <tr>
+                    <td>${employee.id}</td>
+                    <td>${employee.name}</td>
+                    <td>${employee.email}</td>
+                    <td>
+                        <label for="${employee.id}-employee-${employee.role.id}"></label>
+                        <select name="${employee.id}-employee-${employee.role.id}" id="${employee.id}-employee-${employee.role.id}"
+                                title="Employee Role" ${employee.role.id eq 1 ? "disabled":""}>
+
+                            <option value="3" ${employee.role.id eq 3 ? "selected":""}>Developer</option>
+                            <option value="2" ${employee.role.id eq 2 ? "selected":""}>Team Leader</option>
+                            <option value="1" ${employee.role.id eq 1 ? "selected":""}>Manager</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div class="actions-container">
+                            <c:if test="${not empty employee.team}">
+                                <a href="${pageContext.request.contextPath}/teams/tasks?teamId=${employee.team.id}&employeeId=${employee.id}">
+                                    <button>
+                                        View Tasks
+                                    </button>
+                                </a>
+                            </c:if>
+                        </div>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+    </form>
 </div>
 <jsp:include page="/view/components/footer.jsp"/>
 </body>

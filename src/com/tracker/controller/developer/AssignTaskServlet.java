@@ -19,6 +19,7 @@ public class AssignTaskServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher dispatcher = req.getRequestDispatcher("view/developer/assignTask.jsp");
+        HttpSession session = req.getSession();
         String employeeIdParam = req.getParameter("employeeId");
 
         if (employeeIdParam != null && !employeeIdParam.equals("self")) {
@@ -31,6 +32,7 @@ public class AssignTaskServlet extends HttpServlet {
             }
         }
 
+        session.setAttribute("assign-task-referer", req.getHeader("referer"));
         dispatcher.forward(req, resp);
     }
 
@@ -78,6 +80,13 @@ public class AssignTaskServlet extends HttpServlet {
         }
 
         if (authorized) {
+            if(employee.getRole().getId() == 1 && employeeIdParam.equals("self")) {
+                req.setAttribute("error", "You can't assign task to yourself");
+                req.setAttribute("employee", assignedEmployee);
+                dispatcher.forward(req, resp);
+                return;
+            }
+
             TaskStatus status = employeeIdParam.equals("self") ? TaskStatus.PENDING:TaskStatus.TO_DO;
             Task newTask = new Task(-1, titleParam, descriptionParam, status);
 
@@ -86,7 +95,7 @@ public class AssignTaskServlet extends HttpServlet {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            resp.sendRedirect("/");
+            resp.sendRedirect((String) session.getAttribute("assign-task-referer"));
         } else {
             req.setAttribute("error", "You are not authorized to assign task to this employee");
             req.setAttribute("employee", assignedEmployee);

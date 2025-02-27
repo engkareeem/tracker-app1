@@ -84,7 +84,7 @@
                    href="${pageContext.request.contextPath}/teams">Teams</a>
                 <a class="${requestScope.URI eq "/pending-tasks" ? 'active':''}"
                    href="${pageContext.request.contextPath}/pending-tasks">Pending Tasks</a>
-                <a class="${requestScope.URI eq "/pending-tasks" ? 'active':''}"
+                <a class="${requestScope.URI eq "/employees" ? 'active':''}"
                    href="${pageContext.request.contextPath}/employees">Employees</a>
             </c:when>
         </c:choose>

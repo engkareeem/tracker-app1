@@ -50,7 +50,7 @@ public class TeamTasksServlet extends HttpServlet {
             try {
                 String search = searchParam != null ? searchParam : "";
                 Team team = TeamDAO.getTeams(this, "", teamId).get(0);
-                List<Task> tasks = TaskDAO.getTeamTasks(this, team.getId(), search, employeeIdParam);
+                List<Task> tasks = TaskDAO.getTeamTasks(this, team, search, employeeIdParam);
 
                 tasks = Utils.sortTasks(tasks, sortParam, orderParam);
 

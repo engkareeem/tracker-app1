@@ -26,11 +26,13 @@ public class MyTeamServlet extends HttpServlet {
         String orderParam = req.getParameter("order");
 
         if (employee != null) {
-            req.setAttribute("team", employee.getTeam());
             if(employee.getTeam() == null || employee.getRole().getId() != 2) {
                 resp.sendRedirect("/");
                 return;
             }
+
+            req.setAttribute("team", employee.getTeam());
+
             try {
                 List<Employee> members = TeamDAO.getTeamMembers(this, employee.getTeam());
 

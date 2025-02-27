@@ -39,7 +39,7 @@ public class TaskDAO {
         }
     }
 
-    public static List<Task> getTeamTasks(HttpServlet servlet, int teamId, String search, String searchId) throws SQLException {
+    public static List<Task> getTeamTasks(HttpServlet servlet, Team team, String search, String searchId) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
         if(dbConnection != null) {
@@ -60,7 +60,7 @@ public class TaskDAO {
             PreparedStatement statement = connection.prepareStatement(sql);
             List<Task> tasks = new ArrayList<>();
 
-            statement.setInt(1, teamId);
+            statement.setInt(1, team.getId());
             statement.setString(2, "%" + search + "%");
             statement.setString(3, "%" + search + "%");
             statement.setString(4, "%" + search + "%");
@@ -91,20 +91,69 @@ public class TaskDAO {
         }
     }
 
+    public static List<Task> getPendingTasks(HttpServlet servlet, Employee leader) throws SQLException {
+        DBConnection dbConnection = DBConnection.getInstance(servlet);
+
+        if(dbConnection != null) {
+            Connection connection = dbConnection.getConnection();
+            String sql = """
+                    SELECT t.id, t.title, t.description, e.id as employee_id,
+                     e.name as employee_name, e.email as employee_email
+                    FROM tasks as t
+                    JOIN employees as e ON t.assigned_to = e.id
+                    WHERE t.status = 0
+                    """;
+            List<Task> tasks = new ArrayList<>();
+
+            if(leader != null) {
+                sql += " AND e.team_id = ? AND e.id != ?";
+            } else {
+                sql += " AND e.role_id = 2";
+            }
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            if(leader != null) {
+                statement.setInt(1, leader.getTeam().getId());
+                statement.setInt(2, leader.getId());
+            }
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()) {
+                int taskId = resultSet.getInt("id");
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                int employeeId = resultSet.getInt("employee_id");
+                String employeeName = resultSet.getString("employee_name");
+                String employeeEmail = resultSet.getString("employee_email");
+                Employee employee = new Employee(employeeId, employeeName, employeeEmail);
+                Task task = new Task(taskId, title, description, TaskStatus.PENDING, employee);
+
+                tasks.add(task);
+            }
+
+            return tasks;
+        } else {
+            throw new RuntimeException("DB Connection Error");
+        }
+    }
+
     public static void addTask(HttpServlet servlet, Task task, int employeeId) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
         if(dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
-                    INSERT INTO tasks(title, description, assigned_to)
-                    values(?, ?, ?)
+                    INSERT INTO tasks(title, description, assigned_to, status)
+                    values(?, ?, ?, ?)
                     """;
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             statement.setString(1, task.getTitle());
             statement.setString(2, task.getDescription());
             statement.setInt(3, employeeId);
+            statement.setInt(4, task.getStatus().getValue());
 
             int affectedRows = statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
