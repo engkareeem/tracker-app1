@@ -25,7 +25,7 @@ public class DBConnection {
     }
 
     public static DBConnection getInstance(HttpServlet servlet) {
-        if (instance != null) {
+        if (instance != null && instance.getConnection() != null) {
             return instance;
         } else {
             String url = servlet.getServletContext().getInitParameter("jdbcUrl");

@@ -20,6 +20,7 @@ public class TeamDAO {
                     FROM teams as t
                     JOIN employees as e ON t.leader_id = e.id
                     """;
+
             if (id != -1) {
                 sql += " WHERE t.id = ?";
             } else {
@@ -29,8 +30,8 @@ public class TeamDAO {
                         OR UPPER(e.email) LIKE UPPER(?)
                         """;
             }
-            List<Team> teams = new ArrayList<>();
 
+            List<Team> teams = new ArrayList<>();
             PreparedStatement statement = connection.prepareStatement(sql);
 
             if (id != -1) {
@@ -50,11 +51,10 @@ public class TeamDAO {
                 String leaderName = resultSet.getString("leader_name");
                 String leaderEmail = resultSet.getString("leader_email");
                 Employee leader = new Employee(leaderId, leaderName, leaderEmail);
-                Team team = new Team(teamId, name, leader);
 
+                Team team = new Team(teamId, name, leader);
                 teams.add(team);
             }
-
 
             return teams;
         } else {
@@ -107,8 +107,8 @@ public class TeamDAO {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
                 String email = resultSet.getString("email");
-                Employee employee = new Employee(id, name, email);
 
+                Employee employee = new Employee(id, name, email);
                 members.add(employee);
             }
 

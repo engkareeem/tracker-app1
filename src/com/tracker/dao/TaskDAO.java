@@ -14,6 +14,7 @@ import java.util.List;
 public class TaskDAO {
     public static List<Task> getEmployeeTasks(HttpServlet servlet, int employeeId) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
+
         if (dbConnection == null) {
             throw new SQLException("DB Connection Error");
         } else {
@@ -24,17 +25,22 @@ public class TaskDAO {
                     WHERE t.assigned_to = ?
                     """;
             PreparedStatement statement = connection.prepareStatement(sql);
+
             statement.setInt(1, employeeId);
+
             ResultSet resultSet = statement.executeQuery();
             List<Task> tasks = new ArrayList<>();
+
             while (resultSet.next()) {
                 int taskId = resultSet.getInt("id");
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
                 int status = resultSet.getInt("status");
+
                 Task task = new Task(taskId, title, description, TaskStatus.fromValue(status));
                 tasks.add(task);
             }
+
             return tasks;
         }
     }
@@ -80,8 +86,8 @@ public class TaskDAO {
                 String employeeName = resultSet.getString("employee_name");
                 String employeeEmail = resultSet.getString("employee_email");
                 Employee employee = new Employee(employeeId, employeeName, employeeEmail);
-                Task task = new Task(taskId, title, description, TaskStatus.fromValue(status), employee);
 
+                Task task = new Task(taskId, title, description, TaskStatus.fromValue(status), employee);
                 tasks.add(task);
             }
 
@@ -159,7 +165,7 @@ public class TaskDAO {
             ResultSet generatedKeys = statement.getGeneratedKeys();
 
             if(affectedRows > 0) {
-                if(generatedKeys.next()) {
+                if(generatedKeys.next()) { /* Get the id of the inserted task */
                     int taskId = generatedKeys.getInt(1);
 
                     task.setId(taskId);

@@ -19,7 +19,7 @@ public class Utils {
             } else {
                 newTasks.sort(Comparator.comparingInt(task -> -task.getStatus().getValue()));
             }
-        } else if (by.equals("employee")) {
+        } else if (by.equals("employee")) { /* By Employee's name */
             if (order.equals("asc")) {
                 newTasks.sort(Comparator.comparing(task -> task.getAssignedTo().getName()));
             } else {
@@ -63,7 +63,7 @@ public class Utils {
             } else {
                 newTeams.sort(Comparator.comparing(Team::getName).reversed());
             }
-        } else if (by.equals("leader")) { /* By Leader */
+        } else if (by.equals("leader")) { /* By Leader's name */
             if (order.equals("asc")) {
                 newTeams.sort(Comparator.comparing(team -> team.getLeader().getName()));
             } else {

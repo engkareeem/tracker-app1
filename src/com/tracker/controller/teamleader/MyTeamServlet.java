@@ -48,7 +48,6 @@ public class MyTeamServlet extends HttpServlet {
             req.setAttribute("members", new ArrayList<Employee>());
         }
 
-
         dispatcher.forward(req, resp);
     }
 }

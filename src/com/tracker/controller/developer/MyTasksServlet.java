@@ -39,6 +39,7 @@ public class MyTasksServlet extends HttpServlet {
 
         if (employee != null) {
             List<Task> tasks = null;
+
             try {
                 tasks = TaskDAO.getEmployeeTasks(this, employee.getId());
             } catch (SQLException e) {
@@ -62,9 +63,10 @@ public class MyTasksServlet extends HttpServlet {
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
             String value = req.getParameter(key);
-
             String[] keyParts = key.split("-");
+
             if(keyParts.length != 3) continue;
+
             String taskId = keyParts[0];
             String originalStatus = keyParts[2];
 

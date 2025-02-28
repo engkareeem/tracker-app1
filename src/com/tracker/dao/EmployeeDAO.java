@@ -14,41 +14,39 @@ import java.util.List;
 public class EmployeeDAO {
     public static void addEmployee(HttpServlet servlet, Employee employee) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
+
         if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     INSERT INTO employees (name, email, password, role_id, team_id)
                     VALUES (?, ?, ?, ?, null)
                     """;
-
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setString(1, employee.getName());
             statement.setString(2, employee.getEmail());
             statement.setString(3, employee.getPassword());
             statement.setInt(4, employee.getRole().getId());
+
             statement.executeUpdate();
         } else {
             throw new SQLException("DB Connection Error");
         }
     }
 
-    public static void removeEmployeeById(HttpServlet servlet, int id) {
+    public static void removeEmployeeById(HttpServlet servlet, int id) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
+
         if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
                     DELETE FROM employees
                     WHERE id = ?
                     """;
+            PreparedStatement statement = connection.prepareStatement(sql);
 
-            try {
-                PreparedStatement statement = connection.prepareStatement(sql);
-                statement.setInt(1, id);
-                statement.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            statement.setInt(1, id);
+            statement.executeUpdate();
         } else {
             throw new RuntimeException("DB Connection Error");
         }
@@ -62,22 +60,23 @@ public class EmployeeDAO {
             StringBuilder sql = new StringBuilder("UPDATE employees SET ");
             List<Object> params = new ArrayList<>();
 
-            if(employee.getName() != null) {
+            /* To make it behave like PATCH not PUT */
+            if (employee.getName() != null) {
                 sql.append("name = ?, ");
                 params.add(employee.getName());
             }
 
-            if(employee.getEmail() != null) {
+            if (employee.getEmail() != null) {
                 sql.append("email = ?, ");
                 params.add(employee.getEmail());
             }
 
-            if(employee.getRole() != null) {
+            if (employee.getRole() != null) {
                 sql.append("role_id = ?, ");
                 params.add(employee.getRole().getId());
             }
 
-            if(employee.getTeam() != null) {
+            if (employee.getTeam() != null) {
                 sql.append("team_id = ?, ");
                 params.add(employee.getTeam().getId());
             }
@@ -89,9 +88,9 @@ public class EmployeeDAO {
             PreparedStatement statement = connection.prepareStatement(sql.toString());
 
             for (int i = 0; i < params.size(); i++) {
-                if(params.get(i) instanceof String) {
+                if (params.get(i) instanceof String) {
                     statement.setString(i + 1, (String) params.get(i));
-                } else if(params.get(i) instanceof Integer) {
+                } else if (params.get(i) instanceof Integer) {
                     statement.setInt(i + 1, (Integer) params.get(i));
                 }
             }
@@ -125,6 +124,7 @@ public class EmployeeDAO {
 
     public static List<Employee> getAvailableLeaders(HttpServlet servlet) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
+
         if (dbConnection != null) {
             Connection connection = dbConnection.getConnection();
             String sql = """
@@ -132,6 +132,7 @@ public class EmployeeDAO {
                     FROM employees as e
                     WHERE e.role_id = 2 AND e.team_id IS NULL
                     """;
+
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             List<Employee> employees = new ArrayList<>();
@@ -174,6 +175,7 @@ public class EmployeeDAO {
 
     private static ResultSet getEmployeeByQuery(HttpServlet servlet, int id, int role) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
+
         if (dbConnection == null) {
             throw new SQLException("DB Connection Error");
         } else {
@@ -187,6 +189,7 @@ public class EmployeeDAO {
                     LEFT JOIN teams t ON t.id = e.team_id
                     LEFT JOIN employees as leader ON t.leader_id = leader.id
                     """;
+
             if (id != -1) {
                 sql += " WHERE e.id = ?";
             } else {
@@ -196,8 +199,8 @@ public class EmployeeDAO {
                 sql += " ORDER BY e.id";
             }
 
-
             PreparedStatement statement = connection.prepareStatement(sql);
+
             if (id != -1) {
                 statement.setInt(1, id);
             }

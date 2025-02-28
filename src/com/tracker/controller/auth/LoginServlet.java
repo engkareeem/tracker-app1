@@ -23,7 +23,6 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher dispatcher = req.getRequestDispatcher("view/login.jsp");
-
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
@@ -32,12 +31,12 @@ public class LoginServlet extends HttpServlet {
                 Employee employee = AuthDAO.login(this, email, password);
                 if(employee != null) {
                     HttpSession session = req.getSession();
+
                     session.setAttribute("employee", employee);
                     resp.sendRedirect("/");
                 } else {
                     req.setAttribute("error", "Invalid email or password");
                     dispatcher.forward(req, resp);
-
                 }
             } catch (SQLException e) {
                 req.setAttribute("error", e.getMessage());

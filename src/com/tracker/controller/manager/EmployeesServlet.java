@@ -47,8 +47,8 @@ public class EmployeesServlet extends HttpServlet {
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
             String value = req.getParameter(key);
-
             String[] keyParts = key.split("-");
+
             if(keyParts.length != 3) continue;
             String employeeId = keyParts[0];
             String originalRole = keyParts[2];

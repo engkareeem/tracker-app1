@@ -44,8 +44,8 @@ public class TeamsServlet extends HttpServlet {
 
         if (teamIdParam != null) {
             dispatcher = req.getRequestDispatcher("view/teamleader/team.jsp");
-
             int teamId = Integer.parseInt(teamIdParam);
+
             try {
                 Team team = TeamDAO.getTeams(this, "", teamId).get(0);
                 List<Employee> members = TeamDAO.getTeamMembers(this, team);
@@ -94,6 +94,7 @@ public class TeamsServlet extends HttpServlet {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+
             resp.sendRedirect("/teams");
             return;
         } else {

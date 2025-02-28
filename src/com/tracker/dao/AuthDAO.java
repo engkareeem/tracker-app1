@@ -11,11 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AuthDAO {
-    /* will be used by Manager not any user */
+    /* will be used only by Manager  */
     public static void createAccount(HttpServlet servlet, Employee employee, String password) throws SQLException {
         String hashedPassword = hashPassword(password);
 
-        System.out.println(hashedPassword);
         employee.setPassword(hashedPassword);
         EmployeeDAO.addEmployee(servlet, employee);
     }

@@ -55,6 +55,7 @@ public class AssignTaskServlet extends HttpServlet {
             throw new ServletException("Invalid Request (Field/s missing)");
         }
 
+        /* Check if the employee is authorized */
         if (employeeIdParam.equals("self") || employeeIdParam.isEmpty()) {
             assignedEmployeeId = employee.getId();
             employeeIdParam = "self";
@@ -95,6 +96,7 @@ public class AssignTaskServlet extends HttpServlet {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+
             resp.sendRedirect((String) session.getAttribute("assign-task-referer"));
         } else {
             req.setAttribute("error", "You are not authorized to assign task to this employee");
