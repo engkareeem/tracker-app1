@@ -3,7 +3,7 @@ package com.tracker.model;
 import java.util.List;
 
 public class Team {
-    private int id;
+    private Integer id;
     private String name;
     private Employee leader;
     private List<Employee> members;
@@ -19,7 +19,7 @@ public class Team {
         this.leader = leader;
     }
 
-    public Team(int id) {
+    public Team(Integer id) {
         this();
         this.id = id;
     }
@@ -30,7 +30,7 @@ public class Team {
         this.leader = new Employee(leaderId);
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

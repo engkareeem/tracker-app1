@@ -2,10 +2,8 @@ package com.tracker.controller.manager;
 
 import com.tracker.dao.EmployeeDAO;
 import com.tracker.dao.TaskDAO;
-import com.tracker.model.Employee;
-import com.tracker.model.Role;
-import com.tracker.model.Task;
-import com.tracker.model.TaskStatus;
+import com.tracker.dao.TeamDAO;
+import com.tracker.model.*;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -25,11 +23,13 @@ public class EmployeesServlet extends HttpServlet {
         HttpSession session = req.getSession();
         Employee employee = (Employee) session.getAttribute("employee");
 
-        if(employee != null && employee.getRole().getId() == 1) {
+        if (employee != null && employee.getRole().getId() == 1) {
             try {
                 List<Employee> employees = EmployeeDAO.getEmployees(this, -1);
+                List<Team> teams = TeamDAO.getTeams(this, "", -1);
 
                 req.setAttribute("employees", employees);
+                req.setAttribute("teams", teams);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -49,15 +49,35 @@ public class EmployeesServlet extends HttpServlet {
             String value = req.getParameter(key);
             String[] keyParts = key.split("-");
 
-            if(keyParts.length != 3) continue;
+            if (keyParts.length != 3) continue;
             String employeeId = keyParts[0];
-            String originalRole = keyParts[2];
+            String original = keyParts[2];
 
-            if (value.equals(originalRole)) continue;
+            if (value.equals(original)) continue;
 
             Employee newEmployee = new Employee(Integer.parseInt(employeeId));
+            if (keyParts[1].equals("role")) {
+                if (original.equals("2")) {
+                    try {
+                        Employee employee = EmployeeDAO.getEmployeeById(this, Integer.parseInt(employeeId));
+                        System.out.println("1Employee ID: " + employeeId);
+                        if (employee == null || employee.getTeam().getName() != null) continue;
 
-            newEmployee.setRole(new Role(Integer.parseInt(value)));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    newEmployee.setTeam(new Team(null));
+                }
+
+                newEmployee.setRole(new Role(Integer.parseInt(value)));
+            } else if (keyParts[1].equals("team")) {
+                if (value.equals("none")) {
+                    newEmployee.setTeam(new Team(null));
+                } else {
+                    newEmployee.setTeam(new Team(Integer.parseInt(value)));
+                }
+            }
 
             try {
                 EmployeeDAO.updateEmployee(this, newEmployee);

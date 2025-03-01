@@ -81,6 +81,10 @@ public class EmployeeDAO {
                 params.add(employee.getTeam().getId());
             }
 
+            if(employee.getName() == null && employee.getEmail() == null && employee.getRole() == null && employee.getTeam() == null) {
+                return;
+            }
+
             sql.setLength(sql.length() - 2);
             sql.append(" WHERE id = ?");
             params.add(employee.getId());
@@ -92,6 +96,8 @@ public class EmployeeDAO {
                     statement.setString(i + 1, (String) params.get(i));
                 } else if (params.get(i) instanceof Integer) {
                     statement.setInt(i + 1, (Integer) params.get(i));
+                } else if(params.get(i) == null) {
+                    statement.setNull(i + 1, java.sql.Types.NULL);
                 }
             }
 

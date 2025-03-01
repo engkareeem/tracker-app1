@@ -114,6 +114,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Team</th>
                 <th>Actions</th>
             </tr>
             <c:forEach var="employee" items="${requestScope.employees}">
@@ -122,8 +123,8 @@
                     <td>${employee.name}</td>
                     <td>${employee.email}</td>
                     <td>
-                        <label for="${employee.id}-employee-${employee.role.id}"></label>
-                        <select name="${employee.id}-employee-${employee.role.id}" id="${employee.id}-employee-${employee.role.id}"
+                        <label for="${employee.id}-role-${employee.role.id}"></label>
+                        <select name="${employee.id}-role-${employee.role.id}" id="${employee.id}-role-${employee.role.id}"
                                 title="Employee Role" ${employee.role.id eq 1 ? "disabled":""}>
 
                             <option value="3" ${employee.role.id eq 3 ? "selected":""}>Developer</option>
@@ -132,10 +133,22 @@
                         </select>
                     </td>
                     <td>
+                        <label for="${employee.id}-team-${empty employee.team.name ? "none":employee.team.id}"></label>
+                        <select name="${employee.id}-team-${empty employee.team.name ? "none":employee.team.id}"
+                                id="${employee.id}-team-${empty employee.team.name ? "none":employee.team.id}"
+                                title="Employee Team" ${employee.role.id != 3 ? "disabled":""}>
+
+                            <option value="none" ${empty employee.team ? "selected":""}>None</option>
+                            <c:forEach var="team" items="${requestScope.teams}">
+                                <option value="${team.id}" ${employee.team.id eq team.id ? "selected":""}>${team.id}-${team.name}</option>
+                            </c:forEach>
+                        </select>
+                    </td>
+                    <td>
                         <div class="actions-container">
-                            <c:if test="${not empty employee.team}">
+                            <c:if test="${not empty employee.team.name}">
                                 <a href="${pageContext.request.contextPath}/teams/tasks?teamId=${employee.team.id}&employeeId=${employee.id}">
-                                    <button>
+                                    <button type="button">
                                         View Tasks
                                     </button>
                                 </a>
