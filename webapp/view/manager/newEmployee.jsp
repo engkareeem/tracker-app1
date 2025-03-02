@@ -10,67 +10,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>New Employee</title>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-        }
-
-        .text-input {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #04AA6D;
-            color: white;
-            padding: 14px 20px;
-            margin: 8px 0;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            font-size: medium;
-        }
-
-        button:hover {
-            opacity: 0.8;
-        }
-
-        .img-container {
-            text-align: center;
-            margin: 24px 0 12px 0;
-            position: relative;
-        }
-
-        img.avatar {
-            width: 200px;
-            border-radius: 50%;
-        }
-
-        .container {
-            padding: 16px;
-        }
-
-        .login-container {
-            width: 500px;
-        }
-
-        .body-container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .error-div {
-            color: red;
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/manager/newEmployee.css">
 </head>
 <body>
 <div class="body-container">

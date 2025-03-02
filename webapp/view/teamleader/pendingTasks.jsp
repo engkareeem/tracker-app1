@@ -11,38 +11,7 @@
 <html>
 <head>
     <title>Pending Tasks</title>
-    <style>
-        .body-container {
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
-
-        .actions-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        .actions-container a {
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/teamleader/pendingTasks.css">
 </head>
 <body>
 <jsp:include page="/view/components/header.jsp"/>

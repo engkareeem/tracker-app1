@@ -1,0 +1,43 @@
+.body-container {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.radio-container {
+    display: flex;
+}
+
+.by-container, .order-container {
+    display: flex;
+    padding-right: 10px;
+    padding-left: 5px;
+}
+.by-container {
+    border-right: 1px solid rgb(162, 162, 162);
+}
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 10px;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.save-button {
+
+}
+
+.save-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}

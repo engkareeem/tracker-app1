@@ -11,52 +11,7 @@
 <html>
 <head>
     <title>My Team</title>
-    <style>
-        .body-container {
-            padding-left: 10px;
-            padding-right: 10px;
-            overflow: auto;
-        }
-
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
-
-        .actions-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        .actions-container a {
-            cursor: pointer;
-        }
-
-        .radio-container {
-            display: flex;
-        }
-
-        .by-container, .order-container {
-            display: flex;
-            padding-right: 10px;
-            padding-left: 5px;
-        }
-        .by-container {
-            border-right: 1px solid rgb(162, 162, 162);
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/teamleader/team.css">
 </head>
 <body>
 <jsp:include page="/view/components/header.jsp"/>

@@ -4,12 +4,12 @@ public enum TaskStatus {
     PENDING(0, "Pending"),
     TO_DO(1, "To Do"),
     IN_PROGRESS(2, "In Progress"),
-    DONE(3, "Done");
+    DONE(3, "Completed");
 
     private final int value;
     private final String label;
 
-    private TaskStatus(int value, String label) {
+    TaskStatus(int value, String label) {
         this.value = value;
         this.label = label;
     }

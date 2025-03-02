@@ -11,58 +11,7 @@
 <html>
 <head>
     <title>Teams</title>
-    <style>
-        .body-container {
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
-
-        .actions-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        .actions-container a {
-            cursor: pointer;
-        }
-
-        .radio-container {
-            display: flex;
-        }
-
-        .by-container, .order-container {
-            display: flex;
-            padding-right: 10px;
-            padding-left: 5px;
-        }
-
-        .by-container {
-            border-right: 1px solid rgb(162, 162, 162);
-        }
-
-        .new-button-container {
-            width: 100%;
-            display: flex;
-            justify-content: end;
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/manager/teams.css">
 </head>
 <body>
 <jsp:include page="/view/components/header.jsp"/>

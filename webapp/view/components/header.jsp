@@ -10,60 +10,14 @@
 
 <html>
 <style>
-    .header {
-        overflow: hidden;
-        background-color: #f1f1f1;
-        padding: 10px 10px;
-    }
-
-    .header a {
-        float: left;
-        color: black;
-        text-align: center;
-        padding: 12px;
-        text-decoration: none;
-        font-size: 18px;
-        line-height: 25px;
-        border-radius: 4px;
-    }
-
-    .header .logout {
-        float: left;
-        text-align: center;
-        padding: 12px;
-        text-decoration: none;
-        font-size: 18px;
-        line-height: 25px;
-        color: rgb(107, 107, 107);
-        cursor: pointer;
-        border: 0;
-        border-left: 1px solid rgb(160, 160, 160);
-        border-radius: 0;
-    }
-
-    .logout-form {
-        all: unset;
-    }
-
-    .header a.logo {
-        font-size: 25px;
-        font-weight: bold;
-    }
-
-    .header a.active {
-        background-color: #04AA6D;
-        color: white;
-    }
-
-    .header-right {
-        float: right;
-    }
+    <%@include file="/assets/css/components/header.css" %>
 </style>
 <body style="margin: 0">
 <div class="header">
     <a href="${pageContext.request.contextPath}/" class="logo">Tracker App</a>
     <div class="header-right">
         <a class="${requestScope.URI eq "/" ? 'active':''}" href="/">Home</a>
+        <a class="${requestScope.URI eq "/profile" ? 'active':''}" href="${pageContext.request.contextPath}/profile">Profile</a>
         <c:choose>
             <c:when test="${sessionScope.employee.role.id eq 3 and not empty sessionScope.employee.team.name}">
                 <a class="${requestScope.URI eq "/my-tasks" ? 'active':''}"
