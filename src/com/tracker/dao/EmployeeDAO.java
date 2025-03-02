@@ -81,7 +81,7 @@ public class EmployeeDAO {
                 params.add(employee.getTeam().getId());
             }
 
-            if(employee.getName() == null && employee.getEmail() == null && employee.getRole() == null && employee.getTeam() == null) {
+            if (employee.getName() == null && employee.getEmail() == null && employee.getRole() == null && employee.getTeam() == null) {
                 return;
             }
 
@@ -96,7 +96,7 @@ public class EmployeeDAO {
                     statement.setString(i + 1, (String) params.get(i));
                 } else if (params.get(i) instanceof Integer) {
                     statement.setInt(i + 1, (Integer) params.get(i));
-                } else if(params.get(i) == null) {
+                } else if (params.get(i) == null) {
                     statement.setNull(i + 1, java.sql.Types.NULL);
                 }
             }
@@ -107,8 +107,8 @@ public class EmployeeDAO {
         }
     }
 
-    public static List<Employee> getEmployees(HttpServlet servlet, int role) throws SQLException {
-        ResultSet resultSet = getEmployeeByQuery(servlet, -1, role);
+    public static List<Employee> getEmployees(HttpServlet servlet, String search, int id) throws SQLException {
+        ResultSet resultSet = getEmployeeByQuery(servlet, search, id, -1);
         List<Employee> employees = new ArrayList<>();
 
         while (resultSet.next()) {
@@ -119,7 +119,7 @@ public class EmployeeDAO {
     }
 
     public static Employee getEmployeeById(HttpServlet servlet, int id) throws SQLException {
-        ResultSet resultSet = getEmployeeByQuery(servlet, id, -1);
+        ResultSet resultSet = getEmployeeByQuery(servlet, "", id, -1);
 
         if (resultSet.next()) {
             return getEmployeeFromSet(resultSet, servlet);
@@ -179,13 +179,14 @@ public class EmployeeDAO {
         return new Employee(employeeId, name, email, role, team);
     }
 
-    private static ResultSet getEmployeeByQuery(HttpServlet servlet, int id, int role) throws SQLException {
+    private static ResultSet getEmployeeByQuery(HttpServlet servlet, String search, int id, int role) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance(servlet);
 
         if (dbConnection == null) {
             throw new SQLException("DB Connection Error");
         } else {
             Connection connection = dbConnection.getConnection();
+            List<Object> params = new ArrayList<>();
             String sql = """
                     SELECT e.id, e.name, e.email, r.id as role_id, r.role as role,
                     e.team_id, t.name as team_name, leader.id as leader_id,
@@ -198,21 +199,31 @@ public class EmployeeDAO {
 
             if (id != -1) {
                 sql += " WHERE e.id = ?";
+                params.add(id);
             } else {
                 if (role != -1) {
                     sql += " WHERE r.id = ?";
+                    params.add(role);
+                } else {
+                    sql += """
+                            WHERE UPPER(e.name) LIKE UPPER(?) OR
+                            UPPER(e.email) LIKE UPPER(?)
+                            """;
+                    params.add("%" + search + "%");
+                    params.add("%" + search + "%");
                 }
+
                 sql += " ORDER BY e.id";
             }
 
             PreparedStatement statement = connection.prepareStatement(sql);
 
-            if (id != -1) {
-                statement.setInt(1, id);
-            }
-
-            if (role != -1) {
-                statement.setInt(1, role);
+            for (int i = 0; i < params.size(); i++) {
+                if (params.get(i) instanceof String) {
+                    statement.setString(i + 1, (String) params.get(i));
+                } else if (params.get(i) instanceof Integer) {
+                    statement.setInt(i + 1, (Integer) params.get(i));
+                }
             }
 
             return statement.executeQuery();

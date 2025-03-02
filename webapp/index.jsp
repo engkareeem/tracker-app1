@@ -17,6 +17,9 @@
 <div class="body-container">
     <h2>Welcome ${sessionScope.employee.name}!</h2>
     <h4>You are a ${sessionScope.employee.role.name} in this app!</h4>
+    <c:if test="${not empty sessionScope.employee.team.name}">
+        <h4>And You are a member of ${sessionScope.employee.team.name} Team!</h4>
+    </c:if>
     <form method="post" action="${pageContext.request.contextPath}/logout">
         <button type="submit">Logout</button>
     </form>

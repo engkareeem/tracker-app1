@@ -4,6 +4,7 @@ import com.tracker.dao.EmployeeDAO;
 import com.tracker.dao.TaskDAO;
 import com.tracker.dao.TeamDAO;
 import com.tracker.model.*;
+import com.tracker.util.Utils;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -22,11 +23,31 @@ public class EmployeesServlet extends HttpServlet {
         RequestDispatcher dispatcher = req.getRequestDispatcher("/view/manager/employees.jsp");
         HttpSession session = req.getSession();
         Employee employee = (Employee) session.getAttribute("employee");
+        int searchId = -1;
+
+        String sortParam = req.getParameter("sort");
+        String orderParam = req.getParameter("order");
+        String employeeIdParam = req.getParameter("employeeId");
+        String searchParam = req.getParameter("search");
+
+        if (sortParam == null) {
+            sortParam = "ID";
+        }
+
+        if (orderParam == null) {
+            orderParam = "asc";
+        }
+
+        if (employeeIdParam != null && !employeeIdParam.isEmpty()) {
+            searchId = Integer.parseInt(employeeIdParam);
+        }
 
         if (employee != null && employee.getRole().getId() == 1) {
             try {
-                List<Employee> employees = EmployeeDAO.getEmployees(this, -1);
+                List<Employee> employees = EmployeeDAO.getEmployees(this, searchParam == null ? "" : searchParam, searchId);
                 List<Team> teams = TeamDAO.getTeams(this, "", -1);
+
+                employees = Utils.sortEmployees(employees, sortParam, orderParam);
 
                 req.setAttribute("employees", employees);
                 req.setAttribute("teams", teams);

@@ -65,7 +65,7 @@
     <div class="header-right">
         <a class="${requestScope.URI eq "/" ? 'active':''}" href="/">Home</a>
         <c:choose>
-            <c:when test="${sessionScope.employee.role.id eq 3}">
+            <c:when test="${sessionScope.employee.role.id eq 3 and not empty sessionScope.employee.team.name}">
                 <a class="${requestScope.URI eq "/my-tasks" ? 'active':''}"
                    href="${pageContext.request.contextPath}/my-tasks">My Tasks</a>
             </c:when>

@@ -79,7 +79,7 @@
     <div class="login-container">
         <form method="post">
             <div class="img-container">
-                <img src="${pageContext.request.contextPath}/assets/default_avatar.jpg" alt="Avatar" class="avatar">
+                <img src="https://media.discordapp.net/attachments/922243972875841586/1345516488890515476/default_avatar.jpg?ex=67c4d561&is=67c383e1&hm=d0d9b84d2a90aff3506022fc303e7a2be1fa0e84fdd60ebee7a67c1e8cb7595d&=&format=webp&width=504&height=504" alt="Avatar" class="avatar">
             </div>
             <div class="container">
                 <label>

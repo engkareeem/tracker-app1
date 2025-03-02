@@ -69,23 +69,37 @@
 <div class="body-container">
     <h2>Employees</h2>
     <form method="get">
+        <input type="hidden" name="teamId" value="${requestScope.team.id}">
+        <div class="search-container">
+            <label for="search"><b>Search: </b></label>
+            <input type="text" id="search" name="search" value="${param.search}">
+            <button type="submit">Search</button>
+        </div>
+        <div class="search-container">
+            <label for="employeeId"><b>By EmployeeId: </b></label>
+            <input type="number" id="employeeId" name="employeeId" value="${param.employeeId}">
+            <button type="submit">Search</button>
+        </div>
         <div class="radio-container">
             <b>Sort By: </b>
             <div class="by-container">
                 <div>
-                    <input type="radio" id="id" name="sort" value="id"  ${param.sort eq "id" or param.sort eq null ? "checked":""}/>
+                    <input type="radio" id="id" name="sort"
+                           value="id"  ${param.sort eq "id" or param.sort eq null ? "checked":""}/>
                     <label for="id">ID</label>
                 </div>
 
                 <div>
-                    <input type="radio" id="name" name="sort" value="name" ${param.sort eq "name" ? "checked":""}/>
+                    <input type="radio" id="name" name="sort"
+                           value="name" ${param.sort eq "name" ? "checked":""}/>
                     <label for="name">Name</label>
                 </div>
             </div>
 
             <div class="order-container">
                 <div>
-                    <input type="radio" id="asc" name="order" value="asc" ${param.order eq "asc" or param.order eq null? "checked":""} />
+                    <input type="radio" id="asc" name="order"
+                           value="asc" ${param.order eq "asc" or param.order eq null? "checked":""} />
                     <label for="asc">Asc</label>
                 </div>
 
