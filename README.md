@@ -38,6 +38,6 @@ This project is a **Simple Task Management System** built using **J2EE, Servlets
 - Perform actions based on your role.
 - Manage and track tasks in the system.
 
-## Author
-**Prepared by:** Fathi Hindi - Infinite Tiers, Inc.
+## Task Author
+**Task Prepared by:** Fathi Hindi - Infinite Tiers, Inc.
 
